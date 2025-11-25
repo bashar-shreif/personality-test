@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   final String btn_txt;
   final VoidCallback on_pressed;
-  const CustomButton({required this.btn_txt, this.on_pressed, super.key});
+  const CustomButton({
+    required this.btn_txt,
+    required this.on_pressed,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

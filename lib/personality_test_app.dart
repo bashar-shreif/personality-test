@@ -11,9 +11,24 @@ class PersonalityTestApp extends StatefulWidget {
 }
 
 class _PersonalityTestAppState extends State<PersonalityTestApp> {
-  int currentQuestion;
-  final Personality result;
-  Map<Personality, int> personalityScore;
+  Personality? result;
+  Map<Personality, int> personalityScore = {
+    Personality.feeler: 0,
+    Personality.thinker: 0,
+    Personality.planner: 0,
+    Personality.adventurer: 0,
+  };
+  int currentQuestionPosition = 0;
+
+  void proceed(Personality chosenPersona) {
+    setState(() {
+      currentQuestionPosition++;
+      personalityScore.update(chosenPersona, (value) => value + 1);
+      result = personalityScore.entries
+          .reduce((a, b) => a.value > b.value ? a : b)
+          .key;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +37,11 @@ class _PersonalityTestAppState extends State<PersonalityTestApp> {
       initialRoute: '/',
       routes: {
         '/': (context) => StartScreen(),
-        '/question': (context) => QuestionScreen(),
-        '/result': (context) => ResultScreen(),
+        '/question': (context) => QuestionScreen(
+          currentPosition: currentQuestionPosition,
+          updateScore: proceed,
+        ),
+        '/result': (context) => ResultScreen(result: result),
       },
     );
   }
