@@ -1,39 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:personality_test/models/personality.dart';
-import 'package:personality_test/models/question.dart';
-import 'package:personality_test/data/questions.dart';
-import 'package:personality_test/widgets/custom_button.dart';
+import '../models/personality.dart';
+import '../data/questions.dart';
+import '../widgets/custom_button.dart';
+import '../theme.dart';
 
 class QuestionScreen extends StatelessWidget {
-  int currentPosition;
+  final int currentPosition;
   final Function(Personality) updateScore;
-  List<Question> data = questions;
 
-  QuestionScreen({required this.currentPosition, required this.updateScore});
+  const QuestionScreen({
+    required this.currentPosition,
+    required this.updateScore,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    Question question = data[currentPosition];
-    return Column(
-      children: [
-        Text(question.question),
-        CustomButton(
-          btn_txt: question.answers[0].text,
-          on_pressed: updateScore(question.answers[0].personality),
+    final question = questions[currentPosition];
+
+    return Scaffold(
+      backgroundColor: bgColor,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              question.question,
+              style: questionStyle,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            ...question.answers.map(
+              (a) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: CustomButton(
+                  btn_txt: a.text,
+                  on_pressed: () => updateScore(a.personality),
+                ),
+              ),
+            ),
+          ],
         ),
-        CustomButton(
-          btn_txt: question.answers[1].text,
-          on_pressed: updateScore(question.answers[1].personality),
-        ),
-        CustomButton(
-          btn_txt: question.answers[2].text,
-          on_pressed: updateScore(question.answers[2].personality),
-        ),
-        CustomButton(
-          btn_txt: question.answers[3].text,
-          on_pressed: updateScore(question.answers[3].personality),
-        ),
-      ],
+      ),
     );
   }
 }
