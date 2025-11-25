@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:personality_test/widgets/custom-button.dart';
+import 'package:personality_test/widgets/custom_button.dart';
 
 class StartScreen extends StatelessWidget {
   @override
