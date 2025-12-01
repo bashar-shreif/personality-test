@@ -7,8 +7,23 @@ class StartScreen extends StatelessWidget {
     return Column(
       children: [
         Text("Discover Your Personality Type!"),
-        GridView(),
-        CustomButton(),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          children: [
+            Center(child: Text("💖")),
+            Center(child: Text("🧠")),
+            Center(child: Text("🗓️")),
+            Center(child: Text("🗺️")),
+          ],
+        ),
+        CustomButton(
+          btn_txt: "Start Test",
+          on_pressed: () {
+            Navigator.pushNamed(context, '/question');
+          },
+        ),
       ],
     );
   }
