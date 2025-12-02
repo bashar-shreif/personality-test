@@ -1,48 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:personality_test/models/personality.dart';
-import 'package:personality_test/screens/question_screen.dart';
-import 'package:personality_test/screens/result_screen.dart';
-import 'package:personality_test/screens/start_screen.dart';
+import 'models/personality.dart';
+import 'data/questions.dart';
+import 'screens/start_screen.dart';
+import 'screens/question_screen.dart';
+import 'screens/result_screen.dart';
 
 class PersonalityTestApp extends StatefulWidget {
   const PersonalityTestApp({super.key});
+
   @override
-  State<StatefulWidget> createState() => _PersonalityTestAppState();
+  State<PersonalityTestApp> createState() => _PersonalityTestAppState();
 }
 
 class _PersonalityTestAppState extends State<PersonalityTestApp> {
   Personality? result;
+  int currentQuestionPosition = 0;
+  String currentScreen = 'start';
+
   Map<Personality, int> personalityScore = {
     Personality.feeler: 0,
     Personality.thinker: 0,
     Personality.planner: 0,
     Personality.adventurer: 0,
   };
-  int currentQuestionPosition = 0;
 
-  void proceed(Personality chosenPersona) {
+  void proceed(Personality chosen) {
     setState(() {
+      personalityScore[chosen] = personalityScore[chosen]! + 1;
       currentQuestionPosition++;
-      personalityScore.update(chosenPersona, (value) => value + 1);
-      result = personalityScore.entries
-          .reduce((a, b) => a.value > b.value ? a : b)
-          .key;
+
+      if (currentQuestionPosition >= questions.length) {
+        result = personalityScore.entries
+            .reduce((a, b) => a.value > b.value ? a : b)
+            .key;
+        currentScreen = 'result';
+      } else {
+        currentScreen = 'question';
+      }
+    });
+  }
+
+  void restart() {
+    setState(() {
+      result = null;
+      currentQuestionPosition = 0;
+      personalityScore = {
+        Personality.feeler: 0,
+        Personality.thinker: 0,
+        Personality.planner: 0,
+        Personality.adventurer: 0,
+      };
+      currentScreen = 'start';
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Personality Test App',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => StartScreen(),
-        '/question': (context) => QuestionScreen(
+    Widget screen;
+
+    switch (currentScreen) {
+      case 'question':
+        screen = QuestionScreen(
           currentPosition: currentQuestionPosition,
           updateScore: proceed,
-        ),
-        '/result': (context) => ResultScreen(result: result),
-      },
+        );
+        break;
+      case 'result':
+        screen = ResultScreen(result: result, restart: restart);
+        break;
+      case 'start':
+      default:
+        screen = StartScreen(
+          onStart: () => setState(() => currentScreen = 'question'),
+        );
+    }
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Personality Test App',
+      home: screen,
     );
   }
 }
